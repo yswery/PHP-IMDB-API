@@ -1,0 +1,11 @@
+PHP IMDb API
+========
+
+This is a php class for being able to use the IMDb api (not web scraping) 
+
+
+## How it works
+
+Decompiled the android app from IMDB to be how their API calls worked.
+This class replicates these calls including appending the keys and looking like a regular android device querying.
+To see this api at work, enable tot he $debug by setting it to TRUE
