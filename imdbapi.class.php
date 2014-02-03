@@ -8,7 +8,7 @@ class IMDB {
 	public $sig = 'and2';
 
 	// Please set this to 'TRUE' for debugging purposes only.
-	public $debug = true;
+	public $debug = false;
 	
 	//Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
 	// if there is no version in desired language the retuened data will be in english as fallback)
