@@ -6,6 +6,7 @@ class IMDB {
 	public $appID = 'android030401';
 	public $device = 'fbbd68fb-ad11-473f-b5da-28fe6c0bda4c';
 	public $sig = 'and2';
+	public $key = 'eRnAYqbvj2JWXyPcu62yCA';
 
 	// Please set this to 'TRUE' for debugging purposes only.
 	public $debug = false;
@@ -36,7 +37,7 @@ class IMDB {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeOut);
-		curl_setopt($ch,CURLOPT_USERAGENT, '');
+		curl_setopt($ch,CURLOPT_USERAGENT, $this->userAgent);
 		$data = curl_exec($ch);
 		curl_close($ch);
 		return json_decode($data, true);
@@ -53,7 +54,7 @@ class IMDB {
 
 	private function getAPIURL($func){
 		$url = $this->apiURL.$func."appid=".$this->appID."&device=".$this->device."&locale=".$this->language."&timestamp=".$this->getTimeStamp()."&sig=".$this->sig;
-		$sig_hash = hash_hmac('sha1', $url, 'eRnAYqbvj2JWXyPcu62yCA');
+		$sig_hash = hash_hmac('sha1', $url, $this->key);
 		$url .= "-".$sig_hash;
 		return $url;
 	}
