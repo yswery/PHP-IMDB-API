@@ -352,12 +352,13 @@ class IMDB {
         }
 
 	public function getPoster(){
-		if(isset($this->data['photos'][0]['image']['url']))
-			return $this->data['photos'][0]['image']['url'];
 		if(isset($this->data['image']['url']))
-			return $this->data['image']['url'];
+                        return $this->data['image']['url'];
 
-		return 'N/A';
+                if(isset($this->data['photos'][0]['image']['url']))
+                        return $this->data['photos'][0]['image']['url'];
+
+                return 'N/A';
 	}
 
 	public function getRating(){
