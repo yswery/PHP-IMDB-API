@@ -222,6 +222,19 @@ class IMDB {
 
 	}
 
+	public function getUserComments($limit = 5){
+
+                $url = $this->getAPIURL("title/usercomments?tconst=".$this->ImdbId."&limit=".$limit."&");
+		$userCommentData = $this->get_data($url);
+                $userComments = array();
+                foreach($userCommentData['data']['user_comments'] as $comment){
+                    	$comment['text'] = $this->removeAccents($comment['text']);
+			$userComments[] = $comment;
+                }
+                
+                return $userComments;
+	}
+
 	private function getScrape(){
 
 		if(!isset($this->_strSource) || $this->_strSource == null || $this->_strSource == ""){
@@ -413,6 +426,7 @@ class IMDB {
 		$oData['isTV'] = $this->isTvShow();
 		$oData['type'] = $this->getType();
 		$oData['year'] = $this->getYear();
+		$oData['userComments'] = $this->getUserComments();
 		return $oData;
 	}
 
