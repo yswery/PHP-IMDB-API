@@ -246,12 +246,12 @@ class IMDB {
 	}
 
 	public function getLanguagesArray(){
-                $arrReturned  = $this->matchRegex($this->getScrape(), '~href="/language/(.*)(?:\?.*)" itemprop=\'url\'>(.*)</a>~Ui');
-		if (count($arrReturned[2])) {
-			foreach ($arrReturned[2] as $strName) {
-				$arrReturn[] = trim($strName);
-			}
-			return $arrReturn;
+                $arrReturned  = $this->matchRegex($this->getScrape(), '~href="/language/(?:.*)itemprop=\'url\'>(.*)</a>~Uis');
+                if (count($arrReturned[1])) {
+                        foreach ($arrReturned[1] as $strName) {
+                                $arrReturn[] = trim($strName);
+                        }
+                        return $arrReturn;
                 }else{
                         return "N/A";
                 }
