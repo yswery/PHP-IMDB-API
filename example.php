@@ -27,6 +27,7 @@ if($imdb->isReady){
 	$imdb_api['type'] = $imdb->getType();
 	$imdb_api['year'] = $imdb->getYear();
 	$imdb_api['userComments'] = $imdb->getUserComments();
+	$imdb_api['parentalGuide'] = $imdb->getParentalGuide();
 
 	echo "<PRE>";
 	print_r($imdb_api);

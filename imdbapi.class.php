@@ -235,6 +235,20 @@ class IMDB {
                 return $userComments;
 	}
 
+	public function getParentalGuide(){
+
+                $url = $this->getAPIURL("title/parentalguide?tconst=".$this->ImdbId."&");
+                $parentalGuideData = $this->get_data($url);
+                $parentalGuide = array();
+                foreach($parentalGuideData['data']['parental_guide'] as $guide){
+
+		    $guide['text'] = $this->removeAccents($guide['text']);
+                    $parentalGuide[] = $guide;
+                }
+
+                return $parentalGuide;
+	}
+
 	private function getScrape(){
 
 		if(!isset($this->_strSource) || $this->_strSource == null || $this->_strSource == ""){
@@ -427,6 +441,7 @@ class IMDB {
 		$oData['type'] = $this->getType();
 		$oData['year'] = $this->getYear();
 		$oData['userComments'] = $this->getUserComments();
+		$oData['parentalGuide'] = $this->getParentalGuide();
 		return $oData;
 	}
 
