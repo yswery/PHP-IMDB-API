@@ -288,16 +288,11 @@ class IMDB {
     }
 
     public function getTrailer() {
-        $YoutTubeSearchQuery = html_entity_decode(str_replace(' ', '+', $this->getTitle() . "+" . $this->getYear() . "+trailer"));
+        $YoutTubeSearchQuery = urlencode($this->getTitle() . " " . $this->getYear() . " trailer"));
         $YoutTubeSearchQuery = preg_replace('/[^A-Za-z0-9]\+/', '', $YoutTubeSearchQuery);
-        $YoutTubeXML = simplexml_load_file("http://gdata.youtube.com/feeds/api/videos?q=" . $YoutTubeSearchQuery . "&start-index=1&max-results=2");
-        if (isset($YoutTubeXML->entry[0]->id)) {
-            $YoutubeID = substr($YoutTubeXML->entry[0]->id, 42);
-        } else {
-            $YoutubeID = "";
-        }
-
-        return $YoutubeID;
+        $YouTubeURL = "https://www.youtube.com/results?search_query=" . $YoutTubeSearchQuery;
+        $YouTubeHTML = $this->doCurl($YouTubeURL);
+        return $this->matchRegex($YouTubeHTML, '~href="/watch\?v=(.*)"~Uis', 1)
     }
 
     public function getLanguagesString() {
