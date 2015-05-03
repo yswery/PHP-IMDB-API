@@ -292,7 +292,7 @@ class IMDB {
         $YoutTubeSearchQuery = preg_replace('/[^A-Za-z0-9]\+/', '', $YoutTubeSearchQuery);
         $YouTubeURL = "https://www.youtube.com/results?search_query=" . $YoutTubeSearchQuery;
         $YouTubeHTML = $this->doCurl($YouTubeURL);
-        return $this->matchRegex($YouTubeHTML, '~href="/watch\?v=(.*)"~Uis', 1)
+        return $this->matchRegex($YouTubeHTML, '~href="/watch\?v=(.*)"~Uis', 1);
     }
 
     public function getLanguagesString() {
