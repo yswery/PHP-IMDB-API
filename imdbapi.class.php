@@ -288,7 +288,7 @@ class IMDB {
     }
 
     public function getTrailer() {
-        $YoutTubeSearchQuery = urlencode($this->getTitle() . " " . $this->getYear() . " trailer"));
+        $YoutTubeSearchQuery = urlencode($this->getTitle() . " " . $this->getYear() . " trailer");
         $YoutTubeSearchQuery = preg_replace('/[^A-Za-z0-9]\+/', '', $YoutTubeSearchQuery);
         $YouTubeURL = "https://www.youtube.com/results?search_query=" . $YoutTubeSearchQuery;
         $YouTubeHTML = $this->doCurl($YouTubeURL);
