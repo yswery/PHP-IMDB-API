@@ -13,10 +13,10 @@ class IMDB {
 
     //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
-    public function __construct($input, $language = 'en_US', $timeOut = 5) {
+    public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
-        $this->input = $input;
+        $this->movieData = $movieData;
         $this->data = $this->getMovieDetails();
         $this->data = $this->data['data'];
         if (isset($this->data['error'])) {
@@ -203,16 +203,24 @@ class IMDB {
 
     private function getMovieDetails() {
 
-        //check if input was ID or name
-        if (preg_match('~(\d{6,})~', $this->input, $result)) {
-            if ($this->debug)
-                echo "Doing movie details call\n";
+        /*
+        *  Check to see whether the $movieData was a Move IMDB ID or a Movie Name
+        */
+        if (preg_match('~(\d{6,})~', $this->movieData, $result)) {
+            // Is a Movie ID
+            if ($this->debug) {
+                echo "Doing Movie ID call\n";
+            }
             $this->ImdbId = 'tt' . $result[0];
             $url = $this->getAPIURL("title/tt" . $result[0] . "/maindetails?");
-        }else {
-            if ($this->debug)
-                echo "Trying to find ImdbID\n";
-            $url = $this->getAPIURL("find?q=" . urlencode($this->input) . "&");
+
+        } else {
+            // Is a Movie Name
+            if ($this->debug) {
+                echo "Doing Movie Name call\n";
+            }
+
+            $url = $this->getAPIURL("find?q=" . urlencode($this->movieData) . "&");
             $search_result = $this->get_data($url);
             if ($this->debug)
                 echo "Doing movie details call\n";
