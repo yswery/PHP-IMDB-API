@@ -1,8 +1,21 @@
 <?php
 include_once 'imdbapi.class.php';
 
-//put in Name of movie or IMDB ID (tt0499549)
-$imdb = new IMDB("Avatar 2009");
+/*
+Examples:
+
+Movie
+	Terminator 2: Judgment Day (1991)
+	Terminator 2: Judgment Day 1991
+	Terminator 2: Judgment Day
+	Terminator 2
+	tt0103064
+
+TV Show
+	Archer 2009
+	tt1486217
+*/
+$imdb = new IMDB("Archer 2009");
 if($imdb->isReady){
 
 	$imdb_api = array();
