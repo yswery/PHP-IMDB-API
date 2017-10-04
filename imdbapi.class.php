@@ -457,6 +457,10 @@ class IMDB {
         Valid types are
         - feature = Movie/Video
         - tv_series = Tv Show
+        - short = Short Film
+        - documentary = Documentary
+        - video_game = Video Game
+
     */
     public function getType() {
         return isset($this->data['type']) ? $this->data['type'] : 'N/A';
