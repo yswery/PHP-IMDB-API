@@ -2,14 +2,14 @@
 
 class IMDB {
 
-    public $apiURL = 'http://app.imdb.com/';
-    public $userAgent = 'IMDb/3.4.1.103410110 (GT-I9500; Android 19; SAMSUNG)';
-    public $appID = 'android030401';
-    public $device = 'fbbd68fb-ad11-473f-b5da-28fe6c0bda4c';
-    public $sig = 'and2';
-    public $key = 'eRnAYqbvj2JWXyPcu62yCA';
+    private $apiURL = 'http://app.imdb.com/';
+    private $userAgent = 'IMDb/3.4.1.103410110 (GT-I9500; Android 19; SAMSUNG)';
+    private $appID = 'android030401';
+    private $device = 'fbbd68fb-ad11-473f-b5da-28fe6c0bda4c';
+    private $sig = 'and2';
+    private $key = 'eRnAYqbvj2JWXyPcu62yCA';
     // Please set this to 'TRUE' for debugging purposes only.
-    public $debug = false;
+    private $debug = false;
 
     //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
