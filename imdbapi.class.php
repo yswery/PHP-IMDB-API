@@ -453,7 +453,11 @@ class IMDB {
         return isset($this->data['title']) ? $this->data['title'] : 'N/A';
     }
 
-    //We want 'feature' for movie
+    /*
+        Valid types are
+        - feature = Movie/Video
+        - tv_series = Tv Show
+    */
     public function getType() {
         return isset($this->data['type']) ? $this->data['type'] : 'N/A';
     }
