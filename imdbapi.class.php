@@ -334,10 +334,17 @@ class IMDB {
     }
 
     public function getDirectorArray() {
+        if (!$this->isVideo()) {
+            return [];
+        }
         $dir_array = array();
+
         foreach ($this->data['directors_summary'] as $director) {
             $img = isset($director['name']['image']['url']) ? $director['name']['image']['url'] : 'n/a';
-            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']), 'id' => $director['name']['nconst'], 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/', 'image' => $img);
+            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']),
+                                 'id' => $director['name']['nconst'],
+                                 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/',
+                                 'image' => $img);
         }
         return $dir_array;
     }
