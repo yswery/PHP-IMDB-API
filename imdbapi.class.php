@@ -11,14 +11,14 @@ class IMDB {
     // Please set this to 'TRUE' for debugging purposes only.
     private $debug = false;
 
-    //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
+    // Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
     public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
         $this->movieData = $movieData;
         $this->data = $this->getMovieDetails();
-        $this->data = $this->data['data'];
+
         if (isset($this->data['error'])) {
             $this->isReady = false;
             $this->status = $this->data['error']['message'];
@@ -30,8 +30,9 @@ class IMDB {
 
     private function get_data($url) {
 
-        if ($this->debug)
+        if ($this->debug) {
             echo $url . "\n";
+        }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -231,14 +232,18 @@ class IMDB {
             }
 
             $url = $this->getAPIURL("find?q=" . urlencode($this->movieData) . "&");
-            $search_result = $this->get_data($url);
-            if ($this->debug)
-                echo "Doing movie details call\n";
+            $this->validateGetData($search_result = $this->get_data($url));
+
+            if ($this->debug) {
+                echo "Doing Movie Details call\n";
+            }
+
             $this->ImdbId = $search_result['data']['results'][0]['list'][0]['tconst'];
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
 
-        return $this->get_data($url);
+        return $this->validateGetData($this->get_data($url)['data']);
+
     }
 
     public function getUserComments($limit = 5) {
