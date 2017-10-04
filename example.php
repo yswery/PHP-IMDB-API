@@ -1,13 +1,33 @@
 <?php
 include_once 'imdbapi.class.php';
 
-//put in Name of movie or IMDB ID (tt0499549)
-$imdb = new IMDB("Avatar 2009");
+/*
+Examples:
+
+Movie
+	Terminator 2: Judgment Day (1991)
+	Terminator 2: Judgment Day 1991
+	Terminator 2: Judgment Day
+	Terminator 2
+	tt0103064
+
+TV Show
+	Archer 2009
+	tt1486217
+*/
+$imdb = new IMDB("Archer 2009");
 if($imdb->isReady){
 
 	$imdb_api = array();
 	$imdb_api['castArray'] = $imdb->getCastArray();
-	$imdb_api['directorArray'] = $imdb->getDirectorArray();
+
+	// Check to see if the media is a movie or tv series
+	if ($imdb->isTvShow()) {
+		$imdb_api['creators'] = $imdb->getCreatorArray();
+	} else if ($imdb->isVideo()) {
+		$imdb_api['directorArray'] = $imdb->getDirectorArray();
+	}
+
 	$imdb_api['genreArray'] = $imdb->getGenreArray();
 	$imdb_api['genreString'] = $imdb->getGenreString();
 	$imdb_api['mpaa'] = $imdb->getMpaa();
