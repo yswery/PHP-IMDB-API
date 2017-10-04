@@ -20,7 +20,14 @@ if($imdb->isReady){
 
 	$imdb_api = array();
 	$imdb_api['castArray'] = $imdb->getCastArray();
-	$imdb_api['directorArray'] = $imdb->getDirectorArray();
+
+	// Check to see if the media is a movie or tv series
+	if ($imdb->isTvShow()) {
+		$imdb_api['creators'] = $imdb->getCreatorArray();
+	} else if ($imdb->isVideo()) {
+		$imdb_api['directorArray'] = $imdb->getDirectorArray();
+	}
+
 	$imdb_api['genreArray'] = $imdb->getGenreArray();
 	$imdb_api['genreString'] = $imdb->getGenreString();
 	$imdb_api['mpaa'] = $imdb->getMpaa();
