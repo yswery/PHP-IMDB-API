@@ -2,6 +2,7 @@
 include_once 'imdbapi.class.php';
 
 /*
+Add the name of the TV show or Movie as a string into the IMDB constructor.
 Examples:
 
 Movie
