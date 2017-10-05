@@ -2,23 +2,23 @@
 
 class IMDB {
 
-    private $apiURL = 'http://app.imdb.com/';
-    private $userAgent = 'IMDb/3.4.1.103410110 (GT-I9500; Android 19; SAMSUNG)';
-    private $appID = 'android030401';
-    private $device = 'fbbd68fb-ad11-473f-b5da-28fe6c0bda4c';
-    private $sig = 'and2';
-    private $key = 'eRnAYqbvj2JWXyPcu62yCA';
+    public $apiURL = 'http://app.imdb.com/';
+    public $userAgent = 'IMDb/3.4.1.103410110 (GT-I9500; Android 19; SAMSUNG)';
+    public $appID = 'android030401';
+    public $device = 'fbbd68fb-ad11-473f-b5da-28fe6c0bda4c';
+    public $sig = 'and2';
+    public $key = 'eRnAYqbvj2JWXyPcu62yCA';
     // Please set this to 'TRUE' for debugging purposes only.
-    private $debug = false;
+    public $debug = false;
 
-    // Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
+    //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
-    public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
+    public function __construct($input, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
-        $this->movieData = $movieData;
+        $this->input = $input;
         $this->data = $this->getMovieDetails();
-
+        $this->data = $this->data['data'];
         if (isset($this->data['error'])) {
             $this->isReady = false;
             $this->status = $this->data['error']['message'];
@@ -30,9 +30,8 @@ class IMDB {
 
     private function get_data($url) {
 
-        if ($this->debug) {
+        if ($this->debug)
             echo $url . "\n";
-        }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -202,54 +201,32 @@ class IMDB {
         return $string;
     }
 
-    private function validateGetData($returnedData) {
-        if (array_key_exists('error', $returnedData)) {
-            echo '<pre><h2>Error</h2>';
-                print_r($returnedData);
-            echo '</pre>';
-            die();
-        }
-        return $returnedData;
-    }
-
     private function getMovieDetails() {
 
-        /*
-        *  Check to see whether the $movieData was a Move IMDB ID or a Movie Name
-        */
-        if (preg_match('~(\d{6,})~', $this->movieData, $result)) {
-            // Is a Movie ID
-            if ($this->debug) {
-                echo "Doing Movie ID call\n";
-            }
+        //check if input was ID or name
+        if (preg_match('~(\d{6,})~', $this->input, $result)) {
+            if ($this->debug)
+                echo "Doing movie details call\n";
             $this->ImdbId = 'tt' . $result[0];
             $url = $this->getAPIURL("title/tt" . $result[0] . "/maindetails?");
-
-        } else {
-            // Is a Movie Name
-            if ($this->debug) {
-                echo "Doing Movie Name call\n";
-            }
-
-            $url = $this->getAPIURL("find?q=" . urlencode($this->movieData) . "&");
-            $this->validateGetData($search_result = $this->get_data($url));
-
-            if ($this->debug) {
-                echo "Doing Movie Details call\n";
-            }
-
+        }else {
+            if ($this->debug)
+                echo "Trying to find ImdbID\n";
+            $url = $this->getAPIURL("find?q=" . urlencode($this->input) . "&");
+            $search_result = $this->get_data($url);
+            if ($this->debug)
+                echo "Doing movie details call\n";
             $this->ImdbId = $search_result['data']['results'][0]['list'][0]['tconst'];
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
 
-        return $this->validateGetData($this->get_data($url)['data']);
-
+        return $this->get_data($url);
     }
 
     public function getUserComments($limit = 5) {
 
         $url = $this->getAPIURL("title/usercomments?tconst=" . $this->ImdbId . "&limit=" . $limit . "&");
-        $this->validateGetData($userCommentData = $this->get_data($url));
+        $userCommentData = $this->get_data($url);
         $userComments = array();
         if(isset($userCommentData['data']['user_comments'])){
             foreach ($userCommentData['data']['user_comments'] as $comment) {
@@ -264,7 +241,7 @@ class IMDB {
     public function getParentalGuide() {
 
         $url = $this->getAPIURL("title/parentalguide?tconst=" . $this->ImdbId . "&");
-        $this->validateGetData($parentalGuideData = $this->get_data($url));
+        $parentalGuideData = $this->get_data($url);
         $parentalGuide = array();
         if(isset($parentalGuideData['data']['parental_guide'])){
             foreach ($parentalGuideData['data']['parental_guide'] as $guide) {
@@ -349,17 +326,10 @@ class IMDB {
     }
 
     public function getDirectorArray() {
-        if (!$this->isVideo()) {
-            return [];
-        }
         $dir_array = array();
-
         foreach ($this->data['directors_summary'] as $director) {
             $img = isset($director['name']['image']['url']) ? $director['name']['image']['url'] : 'n/a';
-            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']),
-                                 'id' => $director['name']['nconst'],
-                                 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/',
-                                 'image' => $img);
+            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']), 'id' => $director['name']['nconst'], 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/', 'image' => $img);
         }
         return $dir_array;
     }
@@ -419,7 +389,7 @@ class IMDB {
     public function getPlot() {
         if ($this->debug)
             echo "Doing movie plot call\n";
-        $this->validateGetData($json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&")));
+        $json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&"));
         return isset($json_res['data']['plots'][0]['text']) ? $json_res['data']['plots'][0]['text'] : $this->getDescription();
     }
 
@@ -453,15 +423,7 @@ class IMDB {
         return isset($this->data['title']) ? $this->data['title'] : 'N/A';
     }
 
-    /*
-        Valid types are
-        - feature = Movie/Video
-        - tv_series = Tv Show
-        - short = Short Film
-        - documentary = Documentary
-        - video_game = Video Game
-
-    */
+    //We want 'feature' for movie
     public function getType() {
         return isset($this->data['type']) ? $this->data['type'] : 'N/A';
     }
@@ -471,7 +433,7 @@ class IMDB {
     }
 
     public function isVideo() {
-        return $this->getType() == 'feature' ? true : false;
+        return $this->getType() != 'feature' && $this->getType() == 'tv_series' ? true : false;
     }
 
     public function getYear() {
