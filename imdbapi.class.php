@@ -453,7 +453,7 @@ class IMDB {
     }
 
     public function isVideo() {
-        return $this->getType() != 'feature' && $this->getType() == 'tv_series' ? true : false;
+        return $this->getType() == 'feature' ? true : false;
     }
 
     public function getYear() {
