@@ -201,6 +201,16 @@ class IMDB {
         return $string;
     }
 
+    private function validateGetData($returnedData) {
+        if (array_key_exists('error', $returnedData)) {
+            echo '<pre><h2>Error</h2>';
+                print_r($returnedData);
+            echo '</pre>';
+            die();
+        }
+        return $returnedData;
+    }
+
     private function getMovieDetails() {
 
         //check if input was ID or name
