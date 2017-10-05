@@ -214,20 +214,30 @@ class IMDB {
 
     private function getMovieDetails() {
 
-        //check if input was ID or name
-        if (preg_match('~(\d{6,})~', $this->input, $result)) {
-            if ($this->debug)
-                echo "Doing movie details call\n";
+        /*
+        *  Check to see whether the $movieData was a Move IMDB ID or a Movie Name
+        */
+        if (preg_match('~(\d{6,})~', $this->movieData, $result)) {
+            // Is a Movie ID
+            if ($this->debug) {
+                echo "Doing Movie ID call\n";
+            }
             $this->ImdbId = 'tt' . $result[0];
             $url = $this->getAPIURL("title/tt" . $result[0] . "/maindetails?");
-        }else {
-            if ($this->debug)
-                echo "Trying to find ImdbID\n";
-            $url = $this->getAPIURL("find?q=" . urlencode($this->input) . "&");
-            $search_result = $this->get_data($url);
-            if ($this->debug)
-                echo "Doing movie details call\n";
+
+        } else {
+            // Is a Movie Name
+            if ($this->debug) {
+                echo "Doing Movie Name call\n";
+            }
+
+            $url = $this->getAPIURL("find?q=" . urlencode($this->movieData) . "&");
             $this->validateGetData($search_result = $this->get_data($url));
+
+            if ($this->debug) {
+                echo "Doing Movie Details call\n";
+            }
+
             $this->ImdbId = $search_result['data']['results'][0]['list'][0]['tconst'];
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
@@ -443,7 +453,15 @@ class IMDB {
         return isset($this->data['title']) ? $this->data['title'] : 'N/A';
     }
 
-    //We want 'feature' for movie
+    /*
+        Valid types are
+        - feature = Movie/Video
+        - tv_series = Tv Show
+        - short = Short Film
+        - documentary = Documentary
+        - video_game = Video Game
+
+    */
     public function getType() {
         return isset($this->data['type']) ? $this->data['type'] : 'N/A';
     }
