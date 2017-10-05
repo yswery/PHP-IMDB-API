@@ -334,6 +334,26 @@ class IMDB {
         return $dir_array;
     }
 
+    // Used to return the creators of a TV Show
+    public function getCreatorArray() {
+        if (!$this->isTvShow()) {
+            return [];
+        }
+        $creators_array = [];
+
+        foreach ($this->data['creators'] as $creator) {
+
+            $img = isset($creator['name']['image']['url']) ? $creator['name']['image']['url'] : 'n/a';
+
+            $creators_array[] = ['name' => $this->removeAccents($creator['name']['name']),
+                                 'id' => $creator['name']['nconst'],
+                                 'url' => 'http://www.imdb.com/name/' . $creator['name']['nconst'] . '/',
+                                 'image' => $img
+                                 ];
+        }
+        return $creators_array;
+    }
+
     //Can set the max amount of generes to return
     public function getGenreArray($max = 0) {
         if (is_int($max) && $max > 0) {
