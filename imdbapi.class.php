@@ -226,17 +226,20 @@ class IMDB {
             $search_result = $this->get_data($url);
             if ($this->debug)
                 echo "Doing movie details call\n";
+            $this->validateGetData($search_result = $this->get_data($url));
             $this->ImdbId = $search_result['data']['results'][0]['list'][0]['tconst'];
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
 
         return $this->get_data($url);
+        return $this->validateGetData($this->get_data($url)['data']);
+
     }
 
     public function getUserComments($limit = 5) {
 
         $url = $this->getAPIURL("title/usercomments?tconst=" . $this->ImdbId . "&limit=" . $limit . "&");
-        $userCommentData = $this->get_data($url);
+        $this->validateGetData($userCommentData = $this->get_data($url));
         $userComments = array();
         if(isset($userCommentData['data']['user_comments'])){
             foreach ($userCommentData['data']['user_comments'] as $comment) {
@@ -251,7 +254,7 @@ class IMDB {
     public function getParentalGuide() {
 
         $url = $this->getAPIURL("title/parentalguide?tconst=" . $this->ImdbId . "&");
-        $parentalGuideData = $this->get_data($url);
+        $this->validateGetData($parentalGuideData = $this->get_data($url));
         $parentalGuide = array();
         if(isset($parentalGuideData['data']['parental_guide'])){
             foreach ($parentalGuideData['data']['parental_guide'] as $guide) {
@@ -399,7 +402,7 @@ class IMDB {
     public function getPlot() {
         if ($this->debug)
             echo "Doing movie plot call\n";
-        $json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&"));
+        $this->validateGetData($json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&")));
         return isset($json_res['data']['plots'][0]['text']) ? $json_res['data']['plots'][0]['text'] : $this->getDescription();
     }
 
