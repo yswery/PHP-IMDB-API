@@ -13,10 +13,10 @@ class IMDB {
 
     //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
-    public function __construct($input, $language = 'en_US', $timeOut = 5) {
+    public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
-        $this->input = $input;
+        $this->movieData = $movieData;
         $this->data = $this->getMovieDetails();
         $this->data = $this->data['data'];
         if (isset($this->data['error'])) {
