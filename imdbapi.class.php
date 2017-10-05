@@ -11,14 +11,14 @@ class IMDB {
     // Please set this to 'TRUE' for debugging purposes only.
     private $debug = false;
 
-    //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
+    // Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
     public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
         $this->movieData = $movieData;
         $this->data = $this->getMovieDetails();
-        $this->data = $this->data['data'];
+
         if (isset($this->data['error'])) {
             $this->isReady = false;
             $this->status = $this->data['error']['message'];
@@ -30,8 +30,9 @@ class IMDB {
 
     private function get_data($url) {
 
-        if ($this->debug)
+        if ($this->debug) {
             echo $url . "\n";
+        }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -231,7 +232,6 @@ class IMDB {
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
 
-        return $this->get_data($url);
         return $this->validateGetData($this->get_data($url)['data']);
 
     }
@@ -339,10 +339,17 @@ class IMDB {
     }
 
     public function getDirectorArray() {
+        if (!$this->isVideo()) {
+            return [];
+        }
         $dir_array = array();
+
         foreach ($this->data['directors_summary'] as $director) {
             $img = isset($director['name']['image']['url']) ? $director['name']['image']['url'] : 'n/a';
-            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']), 'id' => $director['name']['nconst'], 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/', 'image' => $img);
+            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']),
+                                 'id' => $director['name']['nconst'],
+                                 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/',
+                                 'image' => $img);
         }
         return $dir_array;
     }
