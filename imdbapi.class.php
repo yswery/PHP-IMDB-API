@@ -11,14 +11,14 @@ class IMDB {
     // Please set this to 'TRUE' for debugging purposes only.
     private $debug = false;
 
-    //Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
+    // Define  the language (en_US, fr_FR, de_DE, es_ES, it_IT, pt_PT)
     // if there is no version in desired language the retuened data will be in english as fallback)
-    public function __construct($input, $language = 'en_US', $timeOut = 5) {
+    public function __construct($movieData, $language = 'en_US', $timeOut = 5) {
         $this->language = $language;
         $this->timeOut = $timeOut;
-        $this->input = $input;
+        $this->movieData = $movieData;
         $this->data = $this->getMovieDetails();
-        $this->data = $this->data['data'];
+
         if (isset($this->data['error'])) {
             $this->isReady = false;
             $this->status = $this->data['error']['message'];
@@ -30,8 +30,9 @@ class IMDB {
 
     private function get_data($url) {
 
-        if ($this->debug)
+        if ($this->debug) {
             echo $url . "\n";
+        }
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -201,6 +202,16 @@ class IMDB {
         return $string;
     }
 
+    private function validateGetData($returnedData) {
+        if (array_key_exists('error', $returnedData)) {
+            echo '<pre><h2>Error</h2>';
+                print_r($returnedData);
+            echo '</pre>';
+            die();
+        }
+        return $returnedData;
+    }
+
     private function getMovieDetails() {
 
         //check if input was ID or name
@@ -216,17 +227,19 @@ class IMDB {
             $search_result = $this->get_data($url);
             if ($this->debug)
                 echo "Doing movie details call\n";
+            $this->validateGetData($search_result = $this->get_data($url));
             $this->ImdbId = $search_result['data']['results'][0]['list'][0]['tconst'];
             $url = $this->getAPIURL("title/" . $search_result['data']['results'][0]['list'][0]['tconst'] . "/maindetails?");
         }
 
-        return $this->get_data($url);
+        return $this->validateGetData($this->get_data($url)['data']);
+
     }
 
     public function getUserComments($limit = 5) {
 
         $url = $this->getAPIURL("title/usercomments?tconst=" . $this->ImdbId . "&limit=" . $limit . "&");
-        $userCommentData = $this->get_data($url);
+        $this->validateGetData($userCommentData = $this->get_data($url));
         $userComments = array();
         if(isset($userCommentData['data']['user_comments'])){
             foreach ($userCommentData['data']['user_comments'] as $comment) {
@@ -241,7 +254,7 @@ class IMDB {
     public function getParentalGuide() {
 
         $url = $this->getAPIURL("title/parentalguide?tconst=" . $this->ImdbId . "&");
-        $parentalGuideData = $this->get_data($url);
+        $this->validateGetData($parentalGuideData = $this->get_data($url));
         $parentalGuide = array();
         if(isset($parentalGuideData['data']['parental_guide'])){
             foreach ($parentalGuideData['data']['parental_guide'] as $guide) {
@@ -326,10 +339,17 @@ class IMDB {
     }
 
     public function getDirectorArray() {
+        if (!$this->isVideo()) {
+            return [];
+        }
         $dir_array = array();
+
         foreach ($this->data['directors_summary'] as $director) {
             $img = isset($director['name']['image']['url']) ? $director['name']['image']['url'] : 'n/a';
-            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']), 'id' => $director['name']['nconst'], 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/', 'image' => $img);
+            $dir_array[] = array('name' => $this->removeAccents($director['name']['name']),
+                                 'id' => $director['name']['nconst'],
+                                 'url' => 'http://www.imdb.com/name/' . $director['name']['nconst'] . '/',
+                                 'image' => $img);
         }
         return $dir_array;
     }
@@ -389,7 +409,7 @@ class IMDB {
     public function getPlot() {
         if ($this->debug)
             echo "Doing movie plot call\n";
-        $json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&"));
+        $this->validateGetData($json_res = $this->get_data($this->getAPIURL("title/plot?tconst=" . $this->ImdbId . "&")));
         return isset($json_res['data']['plots'][0]['text']) ? $json_res['data']['plots'][0]['text'] : $this->getDescription();
     }
 
@@ -433,7 +453,7 @@ class IMDB {
     }
 
     public function isVideo() {
-        return $this->getType() != 'feature' && $this->getType() == 'tv_series' ? true : false;
+        return $this->getType() == 'feature' ? true : false;
     }
 
     public function getYear() {
