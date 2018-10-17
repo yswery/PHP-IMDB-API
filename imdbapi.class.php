@@ -54,6 +54,10 @@ class IMDB {
         //Saved the image to 'attachments/_posters/' . $this->_strId . '.jpg';
     }
 
+    /**
+     * Returns the current time
+     * @return string
+     */
     private function getTimeStamp() {
         return time();
     }
