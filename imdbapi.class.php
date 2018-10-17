@@ -28,6 +28,13 @@ class IMDB {
         }
     }
 
+    /**
+     * GET request to IMDB
+     *
+     * @param  string  $url
+     *
+     * @return mixed
+     */
     private function get_data($url) {
 
         if ($this->debug)
